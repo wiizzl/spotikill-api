@@ -454,25 +454,108 @@ const app = new Elysia({ prefix: "/api" })
   .get(
     "/stats",
     async ({ query }) => {
-      let user: User | null;
-
+      let user: User | null = null;
       if (query.user_id) {
         user = await prisma.user.findUnique({ where: { id: query.user_id } });
+        if (!user) return status(400, { message: "Utilisateur non trouvé" });
       }
+
+      const dateFilter: any = {};
+      if (query.from) dateFilter.gte = new Date(query.from);
+      if (query.to) dateFilter.lte = new Date(query.to);
+
+      const where: any = {};
+      if (query.user_id) where.user_id = query.user_id;
+      if (query.from || query.to) where.playing_at = dateFilter;
 
       try {
         switch (query.type) {
           case "artists": {
-            break;
+            const topArtists = await prisma.playing.groupBy({
+              by: ["song_id"],
+              where,
+              _sum: { time: true },
+              orderBy: { _sum: { time: "desc" } },
+              take: 100,
+            });
+
+            const songIds = topArtists.map((a) => a.song_id);
+            const songs = await prisma.song.findMany({ where: { id: { in: songIds } } });
+
+            const artistMap: Record<string, number> = {};
+            topArtists.forEach((a) => {
+              const song = songs.find((s) => s.id === a.song_id);
+              if (song) {
+                artistMap[song.artist] = (artistMap[song.artist] || 0) + (a._sum.time ?? 0);
+              }
+            });
+
+            const top3 = Object.entries(artistMap)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 3)
+              .map(([artist, time]) => ({ artist, time }));
+
+            return status(200, { stats: { artists: top3 } });
           }
           case "albums": {
-            break;
+            const topAlbums = await prisma.playing.groupBy({
+              by: ["song_id"],
+              where,
+              _sum: { time: true },
+              orderBy: { _sum: { time: "desc" } },
+              take: 100,
+            });
+
+            const songIds = topAlbums.map((a) => a.song_id);
+            const songs = await prisma.song.findMany({ where: { id: { in: songIds } }, include: { album: true } });
+
+            const albumMap: Record<string, { title: string; artist: string; time: number }> = {};
+            topAlbums.forEach((a) => {
+              const song = songs.find((s) => s.id === a.song_id);
+              if (song && song.album) {
+                const key = song.album.id.toString();
+                if (!albumMap[key]) {
+                  albumMap[key] = { title: song.album.title ?? "", artist: song.album.artist ?? "", time: 0 };
+                }
+                albumMap[key].time += a._sum.time ?? 0;
+              }
+            });
+
+            const top3 = Object.values(albumMap)
+              .sort((a, b) => b.time - a.time)
+              .slice(0, 3);
+
+            return status(200, { stats: { albums: top3 } });
           }
           case "songs": {
-            break;
+            const topSongs = await prisma.playing.groupBy({
+              by: ["song_id"],
+              where,
+              _sum: { time: true },
+              orderBy: { _sum: { time: "desc" } },
+              take: 3,
+            });
+
+            const songIds = topSongs.map((a) => a.song_id);
+            const songs = await prisma.song.findMany({ where: { id: { in: songIds } } });
+
+            const result = topSongs.map((a) => {
+              const song = songs.find((s) => s.id === a.song_id);
+              return {
+                title: song?.title ?? "",
+                artist: song?.artist ?? "",
+                time: a._sum.time ?? 0,
+              };
+            });
+
+            return status(200, { stats: { songs: result } });
           }
           case "playing_time": {
-            break;
+            const total = await prisma.playing.aggregate({
+              where,
+              _sum: { time: true },
+            });
+            return status(200, { stats: { playing: total._sum.time ?? 0 } });
           }
           default:
             return status(400, { message: "La requête est mal formulée" });
