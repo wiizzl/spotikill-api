@@ -1,0 +1,68 @@
+{
+  "workbench.iconTheme": "flow-dim",
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.productIconTheme": "material-product-icons",
+
+  "workbench.startupEditor": "none",
+  "files.enableTrash": true,
+  "explorer.compactFolders": false,
+  "editor.linkedEditing": true,
+  "files.trimTrailingWhitespace": true,
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.printWidth": 120,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+
+  "editor.fontFamily": "FiraCode Nerd Font",
+  "terminal.integrated.fontFamily": "FiraCode Nerd Font",
+  "scm.inputFontFamily": "FiraCode Nerd Font",
+  "chat.editor.fontFamily": "FiraCode Nerd Font",
+  "debug.console.fontFamily": "FiraCode Nerd Font",
+  "editor.codeLensFontFamily": "FiraCode Nerd Font",
+  "notebook.output.fontFamily": "FiraCode Nerd Font",
+  "markdown.preview.fontFamily": "FiraCode Nerd Font",
+  "editor.inlayHints.fontFamily": "FiraCode Nerd Font",
+  "editor.fontLigatures": true,
+
+  "editor.fontSize": 16,
+  "terminal.integrated.fontSize": 15,
+
+  "editor.tabSize": 2,
+
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 6,
+
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  "window.commandCenter": false,
+  "window.titleBarStyle": "custom",
+  "workbench.activityBar.location": "top",
+  "workbench.sideBar.location": "right",
+  "editor.accessibilitySupport": "off",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.ignoreRebaseWarning": true,
+  "git.enableSmartCommit": true,
+
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.smoothScrolling": true,
+  "workbench.list.smoothScrolling": true,
+  "terminal.integrated.smoothScrolling": true,
+  "editor.cursorBlinking": "expand"
+}

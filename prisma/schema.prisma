@@ -1,0 +1,76 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-musl-arm64-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data.db"
+}
+
+generator prismabox {
+  provider                    = "prismabox"
+  typeboxImportDependencyName = "elysia"
+  typeboxImportVariableName   = "t"
+  inputModel                  = true
+  output                      = "../src/generated/prismabox"
+}
+
+model Album {
+  id           Int       @id @default(autoincrement())
+  title        String?
+  artist       String?
+  release_date DateTime?
+  songs        Song[]
+}
+
+model Song {
+  id       Int       @id @default(autoincrement())
+  title    String
+  artist   String
+  album_id Int
+  album    Album     @relation(fields: [album_id], references: [id])
+  playings Playing[]
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String?
+  password   String?
+  first_name String?
+  last_name  String?
+  playings   Playing[]
+}
+
+model Playing {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  song_id    Int
+  time       Int
+  playing_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id])
+  song       Song     @relation(fields: [song_id], references: [id])
+}
+
+model Playlist {
+  id     Int    @id @default(autoincrement())
+  title  String
+  author String
+  songs  Json
+}
+
+model SignupRequest {
+  id         Int     @id @default(autoincrement())
+  email      String?
+  password   String?
+  first_name String?
+  last_name  String?
+  status     Status  @default(pending)
+}
+
+enum Status {
+  pending
+  accepted
+  rejected
+}
