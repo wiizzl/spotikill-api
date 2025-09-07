@@ -654,5 +654,5 @@ const app = new Elysia({ prefix: "/api" })
   .listen(80);
 
 console.log(
-  `🎵 Streaming Musical API (swagger) is running at http://${app.server?.hostname}:${app.server?.port}/api/swagger`,
+  `🎵 Streaming Musical API (swagger) is running at http://${app.server?.hostname}:${app.server?.port}/api/openapi`,
 );
