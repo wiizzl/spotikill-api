@@ -1,4 +1,4 @@
-import { swagger } from "@elysiajs/swagger";
+import { openapi } from "@elysiajs/openapi";
 import { Elysia, status, t } from "elysia";
 
 import { Status, type User } from "@/generated/prisma";
@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 
 const app = new Elysia({ prefix: "/api" })
   .use(
-    swagger({
+    openapi({
       documentation: {
         info: {
           title: "Streaming Musical API",
